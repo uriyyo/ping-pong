@@ -6,8 +6,6 @@ class Direction(Enum):
     NONE = "none"
     UP = "up"
     DOWN = "down"
-    RIGHT = "right"
-    LEFT = "left"
 
 
 @dataclass
@@ -27,7 +25,8 @@ class Point:
 class Ball(Point):
     speed: int = 1
     size: int = 10
-    direction: Direction = Direction.NONE
+    horizontal_direction: Direction = Direction.NONE
+    vertical_direction: Direction = Direction.NONE
 
 
 @dataclass
