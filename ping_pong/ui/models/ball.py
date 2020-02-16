@@ -2,7 +2,7 @@ from typing import Optional, Tuple
 
 import pygame
 
-from async_ping_pong.ui.consts import BALL_SIZE, BLACK, HEIGHT, WHITE, WIDTH
+from ping_pong.ui.consts import BALL_SIZE, BLACK, HEIGHT, WHITE, WIDTH
 from .direction import Direction
 from .velocity import Velocity
 

@@ -1,6 +1,6 @@
 import pygame
 
-from async_ping_pong.ui.consts import (
+from ping_pong.ui.consts import (
     BLACK,
     HEIGHT,
     PADDLE_HEIGHT,
@@ -37,7 +37,7 @@ class Paddle(pygame.sprite.Sprite):
 
         pygame.draw.rect(self.image, color, [0, 0, width, height])
 
-    async def on_key(self, keys):
+    def on_key(self, keys):
         if keys[self.move_up_key]:
             self.move(Direction.UP)
 

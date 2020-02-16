@@ -1,24 +1,25 @@
 from dataclasses import dataclass
 from queue import Queue
 
-from sync_ping_pong.ui.keyboard import Keyboard
-from sync_ping_pong.ui.models import Game, Paddle
+from ping_pong.ui.keyboard import Keyboard
+from ping_pong.ui.models import Game
 from .commands import SetRectCommand, SetScoresCommand
 from .connection import ConnectionType
-
-
-def on_key_callback(paddle: Paddle, paddle_name: str, queue: Queue):
-    def _callback(keys):
-        paddle.on_key(keys)
-        queue.put(SetRectCommand(paddle_name, paddle.rect))
-
-    return _callback
 
 
 @dataclass
 class RemoteGame(Game):
     connection_type: ConnectionType = ConnectionType.CLIENT
     events_queue: Queue = None
+
+    def _on_key_callback(self, paddle_name: str):
+        paddle = getattr(self, paddle_name)
+
+        def _callback(keys):
+            paddle.on_key(keys)
+            self.events_queue.put(SetRectCommand(paddle_name, paddle.rect))
+
+        return _callback
 
     def init_keyboard(self, keyboard: Keyboard):
         super().init_keyboard(keyboard)
@@ -27,10 +28,9 @@ class RemoteGame(Game):
         keyboard.unsubscribe(self.paddle_b.on_key)
 
         if self.connection_type == ConnectionType.SERVER:
-            keyboard.subscribe(on_key_callback(self.paddle_a, "paddle_a", self.events_queue))
-
+            keyboard.subscribe(self._on_key_callback("paddle_a"))
         elif self.connection_type == ConnectionType.CLIENT:
-            keyboard.subscribe(on_key_callback(self.paddle_b, "paddle_b", self.events_queue))
+            keyboard.subscribe(self._on_key_callback("paddle_b"))
 
     def on_score_changed(self):
         self.events_queue.put(SetScoresCommand(self.scores))

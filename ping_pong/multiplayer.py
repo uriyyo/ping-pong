@@ -1,7 +1,7 @@
 import click
 
-from sync_ping_pong.game_loop import game_loop
-from sync_ping_pong.network import ConnectionType, RemoteGame, connect
+from ping_pong.game_loop import game_loop
+from ping_pong.network import ConnectionType, RemoteGame, connect
 
 
 def remote_game_loop(host, port, connection_type: ConnectionType):
