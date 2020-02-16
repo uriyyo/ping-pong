@@ -18,14 +18,6 @@ class ClientType(Enum):
     SERVER = 'server'
     CLIENT = 'client'
 
-    @classmethod
-    def from_str(cls, s: str) -> "ClientType":
-        for t in ClientType:
-            if t.value.lower() == s.lower():
-                return t
-
-        raise ValueError(s)
-
 
 class Ball(pygame.sprite.Sprite):
 
@@ -43,11 +35,23 @@ class Ball(pygame.sprite.Sprite):
         self.velocity = [randint(4, 8), randint(-8, 8)]
         self.rect = self.image.get_rect()
 
+    def move_to_center(self):
+        self.rect.x = WIDTH // 2
+        self.rect.y = HEIGHT // 2
+
+    def reset_velocity(self):
+        self.velocity[0] = 4 if self.velocity[0] > 0 else -4
+
     def update(self):
         self.rect.x += self.velocity[0]
         self.rect.y += self.velocity[1]
 
     def bounce(self):
+        if self.velocity[0] < 0:
+            self.velocity[0] -= 5
+        else:
+            self.velocity[1] += 5
+
         self.velocity = [-self.velocity[0], randint(-8, 8)]
 
 
@@ -61,6 +65,14 @@ class Paddle(pygame.sprite.Sprite):
 
         pygame.draw.rect(self.image, color, [0, 0, width, height])
         self.rect = self.image.get_rect()
+
+    def set_left(self):
+        self.rect.x = BALL_SIZE * 2
+        self.rect.y = HEIGHT // 2 - PADDLE_HEIGHT // 2
+
+    def set_right(self):
+        self.rect.x = WIDTH - BALL_SIZE * 2
+        self.rect.y = HEIGHT // 2 - PADDLE_HEIGHT // 2
 
     def move_up(self, pixels):
         self.rect.y -= pixels
@@ -85,24 +97,17 @@ class Game:
     sprites: Optional[pygame.sprite.Group] = None
 
     def __post_init__(self):
-        self.paddle_a.rect.x = BALL_SIZE * 2
-        self.paddle_a.rect.y = HEIGHT // 2 - PADDLE_HEIGHT // 2
-
-        self.paddle_b.rect.x = WIDTH - BALL_SIZE * 2
-        self.paddle_b.rect.y = HEIGHT // 2 - PADDLE_HEIGHT // 2
-
-        self.ball.rect.x = WIDTH // 2
-        self.ball.rect.y = HEIGHT // 2
+        self.paddle_a.set_left()
+        self.paddle_b.set_right()
+        self.ball.move_to_center()
 
         self.sprites = pygame.sprite.Group(self.paddle_a, self.paddle_b, self.ball)
 
     async def update(self, queue: asyncio.Queue):
-
         if self.type == ClientType.CLIENT:
             return
 
         self.sprites.update()
-        velocity = [*self.ball.velocity]
         scores = {**self.scores}
 
         if self.ball.rect.x >= WIDTH - BALL_SIZE:
@@ -123,13 +128,11 @@ class Game:
             self.ball.bounce()
 
         if scores != self.scores:
+            self.ball.reset_velocity()
+            self.ball.move_to_center()
             await queue.put(SetScoresCommand(self.scores))
 
-        # if velocity != self.ball.velocity:
-        await queue.put(CompoundCommand([
-            SetRectCommand("ball", self.ball.rect),
-            # SetBallVelocity(self.ball.velocity),
-        ]))
+        await queue.put(SetRectCommand("ball", self.ball.rect))
 
     async def on_key(self, queue: asyncio.Queue):
         keys = pygame.key.get_pressed()
@@ -154,7 +157,7 @@ class Game:
 
     def render(self, screen):
         screen.fill(BLACK)
-        pygame.draw.line(screen, WHITE, [349, 0], [349, 500], 5)
+        pygame.draw.line(screen, WHITE, [WIDTH // 2, 0], [WIDTH // 2, HEIGHT], 5)
 
         self.sprites.draw(screen)
 
