@@ -97,11 +97,11 @@ class Game:
         self.sprites = pygame.sprite.Group(self.paddle_a, self.paddle_b, self.ball)
 
     async def update(self, queue: asyncio.Queue):
-        self.sprites.update()
 
         if self.type == ClientType.CLIENT:
             return
 
+        self.sprites.update()
         velocity = [*self.ball.velocity]
         scores = {**self.scores}
 
@@ -125,11 +125,11 @@ class Game:
         if scores != self.scores:
             await queue.put(SetScoresCommand(self.scores))
 
-        if velocity != self.ball.velocity:
-            await queue.put(CompoundCommand([
-                SetRectCommand("ball", self.ball.rect),
-                SetBallVelocity(self.ball.velocity),
-            ]))
+        # if velocity != self.ball.velocity:
+        await queue.put(CompoundCommand([
+            SetRectCommand("ball", self.ball.rect),
+            # SetBallVelocity(self.ball.velocity),
+        ]))
 
     async def on_key(self, queue: asyncio.Queue):
         keys = pygame.key.get_pressed()
