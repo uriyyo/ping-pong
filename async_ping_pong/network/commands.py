@@ -1,17 +1,9 @@
-from abc import (
-    ABC,
-    abstractmethod,
-)
+from abc import ABC, abstractmethod
 from dataclasses import dataclass
-from typing import (
-    Any,
-    Dict,
-    List,
-    TYPE_CHECKING,
-)
+from typing import Any, Dict, List, TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from ping_pong.models import Game
+    from ping_pong.ui.models import Game
 
 
 class Command(ABC):

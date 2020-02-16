@@ -1,24 +1,28 @@
+import logging
 import pickle
 from asyncio import (
-    create_task,
     Event,
-    open_connection,
     Queue,
-    sleep,
-    start_server,
     StreamReader,
     StreamWriter,
+    create_task,
+    open_connection,
+    sleep,
+    start_server,
 )
 from dataclasses import dataclass
+from enum import Enum
 from typing import Any
-
-from ping_pong.models import (
-    ClientType,
-    Game,
-)
 
 BYTES_SIZE = 32
 BYTES_ORDER = "big"
+
+logger = logging.getLogger(__name__)
+
+
+class ConnectionType(Enum):
+    SERVER = "server"
+    CLIENT = "client"
 
 
 @dataclass
@@ -36,6 +40,8 @@ class Connection:
         data = pickle.dumps(obj)
 
         data_size = len(data).to_bytes(BYTES_SIZE, BYTES_ORDER)
+
+        logger.debug(f"Send {len(data)} bytes {data!r}")
 
         self.writer.write(data_size)
         self.writer.write(data)
@@ -61,38 +67,42 @@ async def server(host, port, handler):
     await s.serve_forever()
 
 
-class SyncQueue(Queue):
+class AsyncQueue(Queue):
     async def put(self, item):
         await super().put(item)
         await sleep(0)
 
 
-async def create_connection(
-        game: Game,
-        client_type: ClientType,
-        host: str,
-        port: int,
-):
-    updates_queue = SyncQueue()
+async def connect(obj: Any, client_type: ConnectionType, host: str, port: int):
+    if client_type == ConnectionType.CLIENT:
+        logger.info(f"Connect to {host}:{port}")
+    else:
+        logger.info(f"Serve on {host}:{port}")
+
+    updates_queue = AsyncQueue()
     connected = Event()
 
     async def start_updaters(conn: Connection):
         async def recv():
             while True:
                 c = await conn.recv_obj()
-                print(c)
-                c(game)
+                logger.info(f"Receive command: {c}")
+
+                c(obj)
 
         async def send():
             while True:
                 c = await updates_queue.get()
+                logger.info(f"Send command: {c}")
+
                 await conn.send_obj(c)
 
         create_task(recv())
         create_task(send())
+
         connected.set()
 
-    if client_type == ClientType.SERVER:
+    if client_type == ConnectionType.SERVER:
         server_task = create_task(server(host, port, start_updaters))
         await connected.wait()
 
@@ -104,3 +114,6 @@ async def create_connection(
         await connected.wait()
 
     return updates_queue
+
+
+__all__ = ["connect", "Connection", "ConnectionType"]
