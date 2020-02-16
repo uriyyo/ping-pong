@@ -1,8 +1,8 @@
 from asyncio import Queue
 from dataclasses import dataclass
 
-from ping_pong.ui.keyboard import Keyboard
-from ping_pong.ui.models import Game
+from async_ping_pong.ui.keyboard import Keyboard
+from async_ping_pong.ui.models import Game
 from .commands import SetRectCommand, SetScoresCommand
 from .connection import ConnectionType
 

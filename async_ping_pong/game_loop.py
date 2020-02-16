@@ -1,6 +1,6 @@
 import logging
 
-from ping_pong.ui.window import Window
+from async_ping_pong.ui.window import Window
 
 logging.basicConfig(
     level=logging.DEBUG,

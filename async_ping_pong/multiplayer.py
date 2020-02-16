@@ -2,8 +2,8 @@ from asyncio import run
 
 import click
 
-from ping_pong.game_loop import game_loop
-from ping_pong.network import ConnectionType, RemoteGame, connect
+from async_ping_pong.game_loop import game_loop
+from async_ping_pong.network import ConnectionType, RemoteGame, connect
 
 
 async def remote_game_loop(host, port, connection_type: ConnectionType):

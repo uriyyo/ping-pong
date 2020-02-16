@@ -1,7 +1,7 @@
 from asyncio import run
 
-from ping_pong.game_loop import game_loop
-from ping_pong.ui.models import Game
+from async_ping_pong.game_loop import game_loop
+from async_ping_pong.ui.models import Game
 
 
 def main():

@@ -3,7 +3,7 @@ from dataclasses import dataclass
 from typing import Any, Dict, List, TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from ping_pong.ui.models import Game
+    from async_ping_pong.ui.models import Game
 
 
 class Command(ABC):

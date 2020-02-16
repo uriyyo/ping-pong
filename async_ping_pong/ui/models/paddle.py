@@ -1,6 +1,6 @@
 import pygame
 
-from ping_pong.ui.consts import (
+from async_ping_pong.ui.consts import (
     BLACK,
     HEIGHT,
     PADDLE_HEIGHT,
