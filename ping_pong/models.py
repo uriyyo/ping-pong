@@ -99,7 +99,7 @@ class Game:
     async def update(self, queue: asyncio.Queue):
         self.sprites.update()
 
-        if self.type != ClientType.CLIENT:
+        if self.type == ClientType.CLIENT:
             return
 
         velocity = [*self.ball.velocity]
