@@ -1,15 +1,17 @@
-from typing import Optional
+from typing import TYPE_CHECKING, Optional
 
 import pygame
 
 from ..consts import BALL_SIZE, BLACK, HEIGHT, WHITE, WIDTH
-from ..types import Color
 from .direction import Direction
 from .velocity import Velocity
 
+if TYPE_CHECKING:
+    from ..types import Color
+
 
 class Ball(pygame.sprite.Sprite):
-    def __init__(self, color: Color = WHITE, size: int = BALL_SIZE) -> None:
+    def __init__(self, color: "Color" = WHITE, size: "int" = BALL_SIZE) -> None:
         super().__init__()
 
         self.size = size
@@ -37,7 +39,7 @@ class Ball(pygame.sprite.Sprite):
         self.velocity.speedup()
         self.velocity.horizontal_inverse()
 
-    def collision_with_borders(self) -> Optional[Direction]:
+    def collision_with_borders(self) -> "Optional[Direction]":
         direction = Direction.collision(self.rect, self.size)
 
         if direction:
@@ -45,7 +47,7 @@ class Ball(pygame.sprite.Sprite):
 
         return direction
 
-    def collision_with_sprite(self, *sprites: pygame.sprite.Sprite) -> bool:
+    def collision_with_sprite(self, *sprites: "pygame.sprite.Sprite") -> "bool":
         return any(pygame.sprite.collide_mask(self, s) for s in sprites)
 
 

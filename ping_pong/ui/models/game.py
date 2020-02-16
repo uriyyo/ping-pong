@@ -1,5 +1,5 @@
 from dataclasses import dataclass, field
-from typing import Any, Dict, Optional
+from typing import Any, Dict
 
 import pygame
 
@@ -12,11 +12,11 @@ from .paddle import Paddle
 
 @dataclass
 class Game:
-    ball: Ball = field(default_factory=Ball)
-    paddle_a: Paddle = field(default_factory=Paddle)
-    paddle_b: Paddle = field(default_factory=Paddle)
-    sprites: pygame.sprite.Group = field(init=False)
-    scores: Dict[str, int] = field(default_factory=lambda: {"a": 0, "b": 0})
+    ball: "Ball" = field(default_factory=Ball)
+    paddle_a: "Paddle" = field(default_factory=Paddle)
+    paddle_b: "Paddle" = field(default_factory=Paddle)
+    sprites: "pygame.sprite.Group" = field(init=False)
+    scores: "Dict[str, int]" = field(default_factory=lambda: {"a": 0, "b": 0})
 
     def __post_init__(self) -> None:
         self.paddle_a.set(Direction.LEFT)
@@ -31,7 +31,7 @@ class Game:
         self.ball.move_to_center()
         self.sprites = pygame.sprite.Group(self.paddle_a, self.paddle_b, self.ball)
 
-    def init_keyboard(self, keyboard: Keyboard) -> None:
+    def init_keyboard(self, keyboard: "Keyboard") -> None:
         keyboard.subscribe(self.paddle_a.on_key)
         keyboard.subscribe(self.paddle_b.on_key)
 
@@ -56,7 +56,7 @@ class Game:
 
             self.on_score_changed()
 
-    def render(self, screen: Any) -> None:
+    def render(self, screen: "Any") -> None:
         screen.fill(BLACK)
         pygame.draw.line(screen, WHITE, [WIDTH // 2, 0], [WIDTH // 2, HEIGHT], 5)
 

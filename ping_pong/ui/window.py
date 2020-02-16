@@ -1,21 +1,24 @@
 from dataclasses import dataclass, field
 from types import TracebackType
-from typing import Any, Iterator, Optional, Tuple, Type
+from typing import TYPE_CHECKING, Any, Iterator, Optional, Type
 
 import pygame
 
 from .consts import SIZE
 from .keyboard import Keyboard
 
+if TYPE_CHECKING:
+    from .types import Size
+
 
 @dataclass
 class Window:
-    fps: int = 30
-    title: str = "Ping Pong"
-    size: Tuple[int, int] = SIZE
+    fps: "int" = 30
+    title: "str" = "Ping Pong"
+    size: "Size" = SIZE
 
-    screen: Optional[Any] = field(default=None, init=False)
-    keyboard: Keyboard = field(default_factory=Keyboard, init=False)
+    screen: "Optional[Any]" = field(default=None, init=False)
+    keyboard: "Keyboard" = field(default_factory=Keyboard, init=False)
 
     def start(self) -> None:
         pygame.init()
@@ -30,11 +33,11 @@ class Window:
         return self
 
     def __exit__(
-        self, exc_type: Type[Exception], exc_val: Exception, exc_tb: TracebackType
+        self, exc_type: "Type[Exception]", exc_val: "Exception", exc_tb: "TracebackType"
     ) -> None:
         pygame.quit()
 
-    def __iter__(self) -> Iterator[Any]:
+    def __iter__(self) -> "Iterator[Any]":
         clock = pygame.time.Clock()
 
         while True:

@@ -8,7 +8,7 @@ from ping_pong.ui.models import Game
 
 @click.command()
 @click.option("-v", "--verbosity", type=str, default=None)
-def main(verbosity: Optional[str]) -> None:
+def main(verbosity: "Optional[str]") -> None:
     game_loop(Game(), verbosity)
 
 

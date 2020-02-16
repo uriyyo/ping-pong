@@ -1,11 +1,14 @@
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
+from queue import Queue
 from typing import TYPE_CHECKING, Dict, List
 
 import pygame
 
 if TYPE_CHECKING:
     from ping_pong.ui.models import Game
+
+    CommandQueue = Queue["Command"]
 
 
 class Command(ABC):
@@ -38,3 +41,12 @@ class SetRectCommand(Command):
 
     def __call__(self, game: "Game") -> None:
         getattr(game, self.entity).rect = self.rect
+
+
+__all__ = [
+    "CommandQueue",
+    "Command",
+    "CompoundCommand",
+    "SetScoresCommand",
+    "SetRectCommand",
+]

@@ -14,8 +14,12 @@ class Direction(Enum):
 
     @classmethod
     def collision(
-        cls, rect: pygame.Rect, size: int, width: int = WIDTH, height: int = HEIGHT
-    ) -> Optional["Direction"]:
+        cls,
+        rect: "pygame.Rect",
+        size: "int",
+        width: "int" = WIDTH,
+        height: "int" = HEIGHT,
+    ) -> "Optional[Direction]":
         if rect.x >= width - size:
             return Direction.RIGHT
         elif rect.x <= 0:

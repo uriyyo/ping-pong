@@ -1,20 +1,23 @@
 from dataclasses import dataclass
 from random import randint
+from typing import TYPE_CHECKING
 
-from ..types import Range
 from .direction import Direction
+
+if TYPE_CHECKING:
+    from ..types import Range
 
 
 @dataclass
 class Velocity:
-    x: int = 0
-    y: int = 0
+    x: "int" = 0
+    y: "int" = 0
 
-    x_start_range: Range = (10, 15)
-    y_start_range: Range = (-20, 20)
+    x_start_range: "Range" = (10, 15)
+    y_start_range: "Range" = (-20, 20)
 
-    speed: int = 4
-    max_speed: int = 45
+    speed: "int" = 4
+    max_speed: "int" = 45
 
     def __post_init__(self) -> None:
         self.reset()
@@ -44,7 +47,7 @@ class Velocity:
         self.x = randint(*self.x_start_range)
         self.y = -self.y
 
-    def move_opposite_direction(self, direction: Direction) -> None:
+    def move_opposite_direction(self, direction: "Direction") -> None:
         if direction.UP and self.y > 0:
             self.y = -self.y
         elif direction.DOWN and self.y < 0:

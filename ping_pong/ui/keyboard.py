@@ -9,12 +9,12 @@ KeyboardCallback = Callable[[Keys], None]
 
 @dataclass
 class Keyboard:
-    subscribers: List[KeyboardCallback] = field(default_factory=list)
+    subscribers: "List[KeyboardCallback]" = field(default_factory=list)
 
-    def subscribe(self, subscriber: KeyboardCallback) -> None:
+    def subscribe(self, subscriber: "KeyboardCallback") -> None:
         self.subscribers.append(subscriber)
 
-    def unsubscribe(self, subscriber: KeyboardCallback) -> None:
+    def unsubscribe(self, subscriber: "KeyboardCallback") -> None:
         self.subscribers.remove(subscriber)
 
     def loop(self) -> None:

@@ -7,7 +7,10 @@ from ping_pong.network import ConnectionType, RemoteGame, connect
 
 
 def remote_game_loop(
-    host: str, port: int, connection_type: ConnectionType, verbosity: Optional[str]
+    host: "str",
+    port: "int",
+    connection_type: "ConnectionType",
+    verbosity: "Optional[str]",
 ) -> None:
     game = RemoteGame(connection_type=connection_type)
     connect(game, connection_type, host, port, game.events_queue)
@@ -20,7 +23,7 @@ def remote_game_loop(
 @click.option("--port", type=int, default=8000)
 @click.option("--server", is_flag=True)
 @click.option("-v", "--verbosity", type=str, default=None)
-def main(host: str, port: int, server: bool, verbosity: Optional[str]) -> None:
+def main(host: "str", port: "int", server: "bool", verbosity: "Optional[str]") -> None:
     remote_game_loop(
         host,
         port,

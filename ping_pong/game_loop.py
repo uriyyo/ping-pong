@@ -1,11 +1,13 @@
 import logging
-from typing import Optional
+from typing import TYPE_CHECKING, Optional
 
-from .ui.models import Game
 from .ui.window import Window
 
+if TYPE_CHECKING:
+    from .ui.models import Game
 
-def game_loop(game: Game, verbosity: Optional[str] = None) -> None:
+
+def game_loop(game: "Game", verbosity: Optional[str] = None) -> None:
     if verbosity is not None:
         logging.basicConfig(
             level=getattr(logging, verbosity.upper()),
