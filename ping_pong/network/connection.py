@@ -5,12 +5,13 @@ from dataclasses import dataclass
 from enum import Enum
 from queue import Queue
 from threading import Thread
-from typing import Any
+from types import TracebackType
+from typing import Any, NoReturn, Optional, Type
+
+logger = logging.getLogger(__name__)
 
 BYTES_SIZE = 32
 BYTES_ORDER = "big"
-
-logger = logging.getLogger(__name__)
 
 
 class ConnectionType(Enum):
@@ -40,7 +41,7 @@ class Connection:
 
             return Connection(s)
 
-    def send_obj(self, obj: Any):
+    def send_obj(self, obj: Any) -> None:
         data = pickle.dumps(obj)
 
         data_size = len(data).to_bytes(BYTES_SIZE, BYTES_ORDER)
@@ -56,39 +57,45 @@ class Connection:
 
         return pickle.loads(data)
 
-    def __enter__(self):
+    def __enter__(self) -> "Connection":
         return self
 
-    def __exit__(self, exc_type, exc_val, exc_tb):
+    def __exit__(
+        self, exc_type: Type[Exception], exc_val: Exception, exc_tb: TracebackType
+    ) -> None:
         self.sock.close()
 
 
-def connect(obj: Any, client_type: ConnectionType, host: str, port: int):
+def connect(
+    obj: Any,
+    client_type: ConnectionType,
+    host: str,
+    port: int,
+    updates_queue: Optional[Queue] = None,
+) -> Queue:
     if client_type == ConnectionType.CLIENT:
         logger.info(f"Connect to {host}:{port}")
     else:
         logger.info(f"Serve on {host}:{port}")
 
-    updates_queue = Queue()
-
-    def start_updaters(conn: Connection):
-        def recv():
+    def start_updaters(conn: Connection, queue: Queue) -> None:
+        def recv() -> NoReturn:
             while True:
                 c = conn.recv_obj()
                 logger.info(f"Receive command: {c}")
 
                 c(obj)
 
-        def send():
+        def send() -> NoReturn:
             while True:
-                c = updates_queue.get()
+                c = queue.get()
                 logger.info(f"Send command: {c}")
 
                 conn.send_obj(c)
 
         threads = [
-            Thread(name='Receiver', target=recv),
-            Thread(name='Sender', target=send),
+            Thread(name="Receiver", target=recv),
+            Thread(name="Sender", target=send),
         ]
 
         for t in threads:
@@ -100,7 +107,10 @@ def connect(obj: Any, client_type: ConnectionType, host: str, port: int):
     else:
         conn = Connection.connect(host, port)
 
-    start_updaters(conn)
+    if updates_queue is None:
+        updates_queue = Queue()
+
+    start_updaters(conn, updates_queue)
 
     return updates_queue
 

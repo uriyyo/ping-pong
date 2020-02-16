@@ -1,16 +1,15 @@
-from typing import Optional, Tuple
+from typing import Optional
 
 import pygame
 
-from ping_pong.ui.consts import BALL_SIZE, BLACK, HEIGHT, WHITE, WIDTH
+from ..consts import BALL_SIZE, BLACK, HEIGHT, WHITE, WIDTH
+from ..types import Color
 from .direction import Direction
 from .velocity import Velocity
 
-Range = Tuple[int, int]
-
 
 class Ball(pygame.sprite.Sprite):
-    def __init__(self, color=WHITE, size=BALL_SIZE):
+    def __init__(self, color: Color = WHITE, size: int = BALL_SIZE) -> None:
         super().__init__()
 
         self.size = size
@@ -21,20 +20,20 @@ class Ball(pygame.sprite.Sprite):
         self.image.set_colorkey(BLACK)
         self.rect = self.image.get_rect()
 
-        pygame.draw.circle(self.image, color, [BALL_SIZE // 2] * 2, BALL_SIZE // 2)
+        pygame.draw.circle(self.image, color, [size // 2] * 2, size // 2)
 
-    def update(self):
+    def update(self) -> None:
         self.rect.x += self.velocity.x
         self.rect.y += self.velocity.y
 
-    def move_to_center(self):
+    def move_to_center(self) -> None:
         self.rect.x = WIDTH // 2
         self.rect.y = HEIGHT // 2
 
-    def reset_velocity(self):
+    def reset_velocity(self) -> None:
         self.velocity.reset()
 
-    def bounce(self):
+    def bounce(self) -> None:
         self.velocity.speedup()
         self.velocity.horizontal_inverse()
 
@@ -46,7 +45,7 @@ class Ball(pygame.sprite.Sprite):
 
         return direction
 
-    def collision_with_sprite(self, *sprites: pygame.sprite.Sprite):
+    def collision_with_sprite(self, *sprites: pygame.sprite.Sprite) -> bool:
         return any(pygame.sprite.collide_mask(self, s) for s in sprites)
 
 

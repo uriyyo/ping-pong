@@ -1,8 +1,9 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from queue import Queue
 
-from ping_pong.ui.keyboard import Keyboard
+from ping_pong.ui.keyboard import Keyboard, KeyboardCallback, Keys
 from ping_pong.ui.models import Game
+
 from .commands import SetRectCommand, SetScoresCommand
 from .connection import ConnectionType
 
@@ -10,18 +11,18 @@ from .connection import ConnectionType
 @dataclass
 class RemoteGame(Game):
     connection_type: ConnectionType = ConnectionType.CLIENT
-    events_queue: Queue = None
+    events_queue: Queue = field(default_factory=Queue)
 
-    def _on_key_callback(self, paddle_name: str):
+    def _on_key_callback(self, paddle_name: str) -> KeyboardCallback:
         paddle = getattr(self, paddle_name)
 
-        def _callback(keys):
+        def _callback(keys: Keys) -> None:
             paddle.on_key(keys)
             self.events_queue.put(SetRectCommand(paddle_name, paddle.rect))
 
         return _callback
 
-    def init_keyboard(self, keyboard: Keyboard):
+    def init_keyboard(self, keyboard: Keyboard) -> None:
         super().init_keyboard(keyboard)
 
         keyboard.unsubscribe(self.paddle_a.on_key)
@@ -32,10 +33,10 @@ class RemoteGame(Game):
         elif self.connection_type == ConnectionType.CLIENT:
             keyboard.subscribe(self._on_key_callback("paddle_b"))
 
-    def on_score_changed(self):
+    def on_score_changed(self) -> None:
         self.events_queue.put(SetScoresCommand(self.scores))
 
-    def update(self):
+    def update(self) -> None:
         if self.connection_type == ConnectionType.SERVER:
             super().update()
             self.events_queue.put(SetRectCommand("ball", self.ball.rect))

@@ -1,13 +1,13 @@
 from dataclasses import dataclass, field
-from typing import Dict, Optional
+from typing import Any, Dict, Optional
 
 import pygame
 
+from ..consts import BLACK, HEIGHT, WHITE, WIDTH
+from ..keyboard import Keyboard
 from .ball import Ball
 from .direction import Direction
 from .paddle import Paddle
-from ..consts import BALL_SIZE, BLACK, HEIGHT, WHITE, WIDTH
-from ..keyboard import Keyboard
 
 
 @dataclass
@@ -15,12 +15,10 @@ class Game:
     ball: Ball = field(default_factory=Ball)
     paddle_a: Paddle = field(default_factory=Paddle)
     paddle_b: Paddle = field(default_factory=Paddle)
+    sprites: pygame.sprite.Group = field(init=False)
+    scores: Dict[str, int] = field(default_factory=lambda: {"a": 0, "b": 0})
 
-    scores: Dict[str, str] = field(default_factory=lambda: {"a": 0, "b": 0})
-
-    sprites: Optional[pygame.sprite.Group] = field(default=None, init=False)
-
-    def __post_init__(self):
+    def __post_init__(self) -> None:
         self.paddle_a.set(Direction.LEFT)
         self.paddle_b.set(Direction.RIGHT)
 
@@ -33,11 +31,11 @@ class Game:
         self.ball.move_to_center()
         self.sprites = pygame.sprite.Group(self.paddle_a, self.paddle_b, self.ball)
 
-    def init_keyboard(self, keyboard: Keyboard):
+    def init_keyboard(self, keyboard: Keyboard) -> None:
         keyboard.subscribe(self.paddle_a.on_key)
         keyboard.subscribe(self.paddle_b.on_key)
 
-    def update(self):
+    def update(self) -> None:
         self.sprites.update()
         scores = {**self.scores}
 
@@ -58,7 +56,7 @@ class Game:
 
             self.on_score_changed()
 
-    def render(self, screen):
+    def render(self, screen: Any) -> None:
         screen.fill(BLACK)
         pygame.draw.line(screen, WHITE, [WIDTH // 2, 0], [WIDTH // 2, HEIGHT], 5)
 
@@ -67,15 +65,15 @@ class Game:
         font = pygame.font.Font(None, 74)
 
         text = font.render(str(self.scores["a"]), 1, WHITE)
-        screen.blit(text, (WIDTH // 2 - BALL_SIZE * 2, 10))
+        screen.blit(text, (WIDTH // 2 - self.ball.size * 2, 10))
 
         text = font.render(str(self.scores["b"]), 1, WHITE)
-        screen.blit(text, (WIDTH // 2 + BALL_SIZE, 10))
+        screen.blit(text, (WIDTH // 2 + self.ball.size, 10))
 
         pygame.display.flip()
 
-    def on_score_changed(self):
-        pass
+    def on_score_changed(self) -> None:
+        ...
 
 
 __all__ = ["Game"]

@@ -1,26 +1,27 @@
 from dataclasses import dataclass, field
-from typing import Callable, List
+from typing import Callable, List, Sequence
 
 import pygame
+
+Keys = Sequence[int]
+KeyboardCallback = Callable[[Keys], None]
 
 
 @dataclass
 class Keyboard:
-    delay: float = 0
-    subscribers: List[Callable] = field(default_factory=list)
+    subscribers: List[KeyboardCallback] = field(default_factory=list)
 
-    def subscribe(self, subscriber: Callable):
+    def subscribe(self, subscriber: KeyboardCallback) -> None:
         self.subscribers.append(subscriber)
 
-    def unsubscribe(self, subscriber: Callable):
+    def unsubscribe(self, subscriber: KeyboardCallback) -> None:
         self.subscribers.remove(subscriber)
 
-    def loop(self):
-        keys = pygame.key.get_pressed()
+    def loop(self) -> None:
+        keys: Keys = pygame.key.get_pressed()
 
-        if any(keys):
-            for h in self.subscribers:
-                h(keys)
+        for h in self.subscribers:
+            h(keys)
 
 
-__all__ = ["Keyboard"]
+__all__ = ["Keys", "Keyboard", "KeyboardCallback"]

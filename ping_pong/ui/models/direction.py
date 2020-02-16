@@ -25,5 +25,7 @@ class Direction(Enum):
         elif rect.y < 0:
             return Direction.UP
 
+        return None
+
 
 __all__ = ["Direction"]

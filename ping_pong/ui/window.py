@@ -1,40 +1,42 @@
 from dataclasses import dataclass, field
-from typing import Any, Optional, Tuple
+from types import TracebackType
+from typing import Any, Iterator, Optional, Tuple, Type
 
 import pygame
 
 from .consts import SIZE
-from .fps import FPS
 from .keyboard import Keyboard
 
 
 @dataclass
 class Window:
-    fps: FPS = FPS()
+    fps: int = 30
     title: str = "Ping Pong"
     size: Tuple[int, int] = SIZE
+
     screen: Optional[Any] = field(default=None, init=False)
     keyboard: Keyboard = field(default_factory=Keyboard, init=False)
 
-    def __post_init__(self):
-        self.keyboard.delay = self.fps.fps / 2
-
-    def start(self):
+    def start(self) -> None:
         pygame.init()
         pygame.mixer.quit()
 
         self.screen = pygame.display.set_mode(SIZE)
         pygame.display.set_caption("Ping Pong")
 
-    def __enter__(self):
+    def __enter__(self) -> "Window":
         self.start()
 
         return self
 
-    def __exit__(self, exc_type, exc_val, exc_tb):
+    def __exit__(
+        self, exc_type: Type[Exception], exc_val: Exception, exc_tb: TracebackType
+    ) -> None:
         pygame.quit()
 
-    def __iter__(self):
+    def __iter__(self) -> Iterator[Any]:
+        clock = pygame.time.Clock()
+
         while True:
             event = pygame.event.poll()
 
@@ -45,7 +47,7 @@ class Window:
 
             yield event
 
-            self.fps.loop()
+            clock.tick(self.fps)
 
 
 __all__ = ["Window"]
