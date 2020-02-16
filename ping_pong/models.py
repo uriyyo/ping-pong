@@ -164,9 +164,9 @@ class Game:
         font = pygame.font.Font(None, 74)
 
         text = font.render(str(self.scores["a"]), 1, WHITE)
-        screen.blit(text, (250, 10))
+        screen.blit(text, (WIDTH // 2 - BALL_SIZE * 2, 10))
 
         text = font.render(str(self.scores["b"]), 1, WHITE)
-        screen.blit(text, (420, 10))
+        screen.blit(text, (WIDTH // 2 + BALL_SIZE, 10))
 
         pygame.display.flip()
