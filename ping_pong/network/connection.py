@@ -83,16 +83,20 @@ def connect(
             while True:
                 c = conn.recv_obj()
                 logger.info(f"Receive command: {c}")
-
-                c(obj)
+                try:
+                    c(obj)
+                except Exception as e:
+                    logger.error("Exception during command execution", exc_info=e)
 
         def send() -> NoReturn:
             while True:
                 c = queue.get()
                 logger.info(f"Send command: {c}")
 
-                conn.send_obj(c)
-
+                try:
+                    conn.send_obj(c)
+                except Exception as e:
+                    logger.error("Exception during object sending", exc_info=e)
         threads = [
             Thread(name="Receiver", target=recv),
             Thread(name="Sender", target=send),

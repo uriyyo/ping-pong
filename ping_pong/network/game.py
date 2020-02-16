@@ -29,9 +29,9 @@ class RemoteGame(Game):
         keyboard.unsubscribe(self.paddle_b.on_key)
 
         if self.connection_type == ConnectionType.SERVER:
-            keyboard.subscribe(self._on_key_callback("paddle_a"))
-        elif self.connection_type == ConnectionType.CLIENT:
             keyboard.subscribe(self._on_key_callback("paddle_b"))
+        elif self.connection_type == ConnectionType.CLIENT:
+            keyboard.subscribe(self._on_key_callback("paddle_a"))
 
     def on_score_changed(self) -> None:
         self.events_queue.put(SetScoresCommand(self.scores))

@@ -11,10 +11,10 @@ class Velocity:
     y: int = 0
 
     x_start_range: Range = (10, 15)
-    y_start_range: Range = (-10, 10)
+    y_start_range: Range = (-20, 20)
 
     speed: int = 4
-    max_speed: int = 40
+    max_speed: int = 45
 
     def __post_init__(self) -> None:
         self.reset()
