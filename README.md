@@ -1,2 +1,0 @@
-# network-ping-pong
-🎾
