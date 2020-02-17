@@ -3,7 +3,7 @@
     <h1 align="center">Ping Pong</h1>
 
     <p align="center">
-        <img alt="Screenshot" src="/rsrs/screen.png"></a>
+        <img alt="Screenshot" src="rsrc/screen.png"></a>
     </p>
 
 General Information
