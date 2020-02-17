@@ -18,7 +18,7 @@ There are two game mods:
 Installation
 ------------
 
-.. raw:: bash
+.. code-block:: bash
 
     $ pip install git+https://github.com/uriyyo/ping-pong
 
@@ -27,17 +27,17 @@ Example of usage
 
 To start ``single-player``:
 
-.. raw:: bash
+.. code-block:: bash
 
     $ ping-pong-singleplayer
 
 
 To start ``multi-player``:
 
-.. raw:: bash
+.. code-block:: bash
 
     # Start server
     $ ping-pong-multiplayer --server --port=8000
 
-    $ Start client
-    $ ping-pong-multiplayer --host=${ADDRESS_SERVER} --port=8000
+    # Start client
+    $ ping-pong-multiplayer --host=${SERVER_ADDRESS} --port=8000
