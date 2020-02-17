@@ -12,6 +12,7 @@ General Information
 Classic ping pong game writen using ``python`` and ``pygame``.
 
 There are two game mods:
+
 * single-player
 * multi-player
 
