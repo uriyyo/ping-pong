@@ -9,7 +9,7 @@
 General Information
 -------------------
 
-Classic ping pong game writen using ``python`` and ``pygame``.
+Classic ping pong game written using ``python`` and ``pygame``.
 
 There are two game mods:
 
